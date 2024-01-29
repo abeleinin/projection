@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { Heading } from '@chakra-ui/react'
 import { Box, Button } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
+import { Text } from '@chakra-ui/react'
 
 const Titlescreen = ({
   children,
@@ -11,12 +12,9 @@ const Titlescreen = ({
   onStatusChange,
   delay = 0.2
 }) => {
-  const changeGame = useCallback(
-    () => {
-      onStatusChange(true)
-    },
-    [onStatusChange]
-  )
+  const changeGame = useCallback(() => {
+    onStatusChange(true)
+  }, [onStatusChange])
   return (
     <motion.div
       initial={{ y: 30, opacity: 0 }}
@@ -30,7 +28,7 @@ const Titlescreen = ({
         <Heading size="4xl" my={4}>
           {title}
         </Heading>
-        {children}
+        <Text fontSize="xl">{children}</Text>
         <br />
         <Button
           bg="yellow.400"
