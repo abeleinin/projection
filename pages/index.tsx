@@ -1,21 +1,33 @@
-import { Button, SimpleGrid, Heading, Box } from '@chakra-ui/react'
+import { Heading, Box } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { useDB } from '../contexts/DatabaseContext'
 import Board from '../components/board'
 import Titlescreen from '../components/titlescreen'
 import timeout from '../components/util'
-import Level from '../components/level'
+// import Level from '../components/level'
+import RandomLayout from '../components/layout/random_layout'
+import GridLayout from '../components/layout/grid_layout'
 
 function VisualMemory() {
   const [isOn, setIsOn] = useState(false)
   const [isOver, setIsOver] = useState(false)
-  const numberList = Array.from(Array(36).keys()).map(i => i.toString())
+  const numberTiles = 16
+  const numberList = Array.from(Array(numberTiles).keys()).map(i =>
+    i.toString()
+  )
+
+  const testType = {
+    no_mask: false,
+    energy_mask: false,
+    remove_board: false,
+    board_shuffle: true
+  }
 
   const initPlay = {
     isDisplay: false,
     userTurn: false,
-    score: 7,
+    score: 5,
     correct: 0,
     tilePattern: [],
     userGuess: [],
@@ -29,6 +41,8 @@ function VisualMemory() {
   const [rewardTile, setRewardTile] = useState([])
   const [playerScore, setPlayerScore] = useState(0)
   const [playerTrial, setPlayerTrial] = useState(0)
+
+  const [currFlashIntensity, setCurrFlashIntensity] = useState('1')
 
   const [userData, setUserData] = useState({
     correct: [],
@@ -64,7 +78,7 @@ function VisualMemory() {
         })
       setPlay(initPlay)
     }
-  })
+  }, [isOn])
 
   // Select next tile in sequence
   useEffect(() => {
@@ -76,7 +90,7 @@ function VisualMemory() {
       setUserData({ correct: [], mask: [], Date: new Date() })
 
       while (patternIdsSet.size < play.score) {
-        patternIdsSet.add(Math.floor(Math.random() * 36).toString())
+        patternIdsSet.add(Math.floor(Math.random() * numberTiles).toString())
       }
 
       let patternIds = Array.from(patternIdsSet)
@@ -100,20 +114,60 @@ function VisualMemory() {
     }
   }, [isOn, play.isDisplay, play.tilePattern.length])
 
+  const [buttonPositions, setButtonPositions] = useState([])
+
+  const checkOverlap = (newPos, existingPositions) => {
+    for (let pos of existingPositions) {
+      if (
+        newPos.left < pos.right &&
+        newPos.right > pos.left &&
+        newPos.top < pos.bottom &&
+        newPos.bottom > pos.top
+      ) {
+        return true
+      }
+    }
+    return false
+  }
+
+  useEffect(() => {
+    if (buttonPositions.length === 0) {
+      let positions = []
+      numberList.forEach(() => {
+        let newPos, overlap
+        do {
+          newPos = {
+            left: Math.random() * 90,
+            top: Math.random() * 90
+          }
+          newPos.right = newPos.left + 14
+          newPos.bottom = newPos.top + 14
+          overlap = checkOverlap(newPos, positions)
+        } while (overlap)
+        positions.push(newPos)
+      })
+      setButtonPositions(positions)
+    }
+  }, [numberList])
+
   async function displayTiles() {
     await timeout(1000)
     setFlashTile(play.tilePattern)
 
     // Apply mask effect here
-    if (play.mask[playerTrial] == 'energy-mask') {
+    // if (play.mask[playerTrial] == 'energy-mask') {
+    //   await timeout(1000)
+    //   setFlashTile(numberList)
+    // } else if (play.mask[playerTrial] == 'remove-board') {
+    if (true) {
       await timeout(1000)
+      setCurrFlashIntensity('0')
       setFlashTile(numberList)
-    } else if (play.mask[playerTrial] == 'remove-board') {
-      await timeout(1000)
     }
 
     await timeout(1000)
     setFlashTile([])
+    setCurrFlashIntensity('1')
     setPlay({ ...play, isDisplay: false, userTurn: true })
   }
 
@@ -178,34 +232,39 @@ function VisualMemory() {
   }
 
   if (isOn) {
-    return (
-      <Board>
-        <Box>
-          <Level>{play.score}</Level>
-          <SimpleGrid spacing="1" columns={{ md: 6 }}>
-            {numberList &&
-              numberList.map((v, _) => (
-                <Button
-                  key={v}
-                  // bg={wrongTile.includes(v) ? 'black' : 'white'}
-                  bg={
-                    rewardTile.includes(v)
-                      ? '#38DC35'
-                      : wrongTile.includes(v)
-                      ? 'red'
-                      : 'white'
-                  }
-                  p="12"
-                  rounded="md"
-                  opacity={flashTile.includes(v) ? '1' : '0.2'}
-                  _hover={{}}
-                  onClick={() => tileClickHandle(v)}
-                ></Button>
-              ))}
-          </SimpleGrid>
-        </Box>
-      </Board>
-    )
+    if (testType.board_shuffle) {
+      return (
+        <Board>
+          <Box>
+            {/* <Level>{play.score}</Level> */}
+            <RandomLayout
+              numberList={numberList}
+              tileClickHandle={tileClickHandle}
+              rewardTile={rewardTile}
+              wrongTile={wrongTile}
+              flashTile={flashTile}
+              buttonPositions={buttonPositions}
+            />
+          </Box>
+        </Board>
+      )
+    } else {
+      return (
+        <Board>
+          <Box>
+            {/* <Level>{play.score}</Level> */}
+            <GridLayout
+              numberList={numberList}
+              tileClickHandle={tileClickHandle}
+              rewardTile={rewardTile}
+              wrongTile={wrongTile}
+              flashTile={flashTile}
+              flashIntensity={currFlashIntensity}
+            />
+          </Box>
+        </Board>
+      )
+    }
   } else if (isOver) {
     return (
       <Board>
@@ -219,15 +278,6 @@ function VisualMemory() {
           <Heading size="2xl" color="#fff">
             Thank you for playing!
           </Heading>
-          {/* <Button
-            mt={10}
-            bg='yellow.400'
-            onClick={() => {
-              setIsOn(true), setIsOver(false)
-            }}
-          >
-            Play again
-          </Button> */}
         </Box>
       </Board>
     )
@@ -240,8 +290,7 @@ function VisualMemory() {
           button="Start"
           onStatusChange={setIsOn}
         >
-          Remember the 7 tile pattern on a 6 x 6 grid. The game is repeated 50
-          times.
+          Explain procedure here.
         </Titlescreen>
       </Board>
     )
