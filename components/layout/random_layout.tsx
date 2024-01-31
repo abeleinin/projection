@@ -9,6 +9,7 @@ interface RandomLayoutProps {
   wrongTile: string[]
   flashTile: string[]
   buttonPositions: any[]
+  flashIntensity: string
 }
 
 const RandomLayout: React.FC<RandomLayoutProps> = memo(function RandomLayout({
@@ -17,7 +18,8 @@ const RandomLayout: React.FC<RandomLayoutProps> = memo(function RandomLayout({
   rewardTile,
   wrongTile,
   flashTile,
-  buttonPositions
+  buttonPositions,
+  flashIntensity
 }) {
   return (
     <Box position="relative" width="40vw" height="60vh">
@@ -36,7 +38,7 @@ const RandomLayout: React.FC<RandomLayoutProps> = memo(function RandomLayout({
           }
           p="10"
           rounded="md"
-          opacity={flashTile.includes(v) ? '1' : '0.2'}
+          opacity={flashTile.includes(v) ? flashIntensity : '0.2'}
           _hover={{}}
           onClick={() => tileClickHandle(v)}
         />

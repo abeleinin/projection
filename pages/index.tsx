@@ -244,6 +244,7 @@ function VisualMemory() {
               wrongTile={wrongTile}
               flashTile={flashTile}
               buttonPositions={buttonPositions}
+              flashIntensity={currFlashIntensity}
             />
           </Box>
         </Board>
