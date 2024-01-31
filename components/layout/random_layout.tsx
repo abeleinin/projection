@@ -22,13 +22,14 @@ const RandomLayout: React.FC<RandomLayoutProps> = memo(function RandomLayout({
   flashIntensity
 }) {
   return (
-    <Box position="relative" width="40vw" height="60vh">
+    // <Box position="relative" width="50vw" height="80vh" left="10em" (Movement mask using left and top attr)>
+    <Box position="relative" width="50vw" height="80vh">
       {numberList.map((v, index) => (
         <Button
           key={v}
           position="absolute"
-          left={`${buttonPositions[index]?.left}%`}
-          top={`${buttonPositions[index]?.top}%`}
+          left={`${buttonPositions[index]?.left}em`}
+          top={`${buttonPositions[index]?.top}em`}
           bg={
             rewardTile.includes(v)
               ? '#38DC35'
@@ -36,7 +37,7 @@ const RandomLayout: React.FC<RandomLayoutProps> = memo(function RandomLayout({
               ? 'red'
               : 'white'
           }
-          p="10"
+          p="2.5em"
           rounded="md"
           opacity={flashTile.includes(v) ? flashIntensity : '0.2'}
           _hover={{}}

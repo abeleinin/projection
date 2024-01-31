@@ -9,7 +9,7 @@ const GridLayout = ({
   flashIntensity
 }) => {
   return (
-    <SimpleGrid spacing="1" columns={{ md: 6 }}>
+    <SimpleGrid spacing="1" columns={{ md: 5 }}>
       {numberList &&
         numberList.map((v, _) => (
           <Button
@@ -22,7 +22,7 @@ const GridLayout = ({
                 ? 'red'
                 : 'white'
             }
-            p="12"
+            p="2.5em"
             rounded="md"
             opacity={flashTile.includes(v) ? flashIntensity : '0.2'}
             _hover={{}}

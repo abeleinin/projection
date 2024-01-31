@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { Heading } from '@chakra-ui/react'
 import { Box, Button } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
@@ -12,9 +12,36 @@ const Titlescreen = ({
   onStatusChange,
   delay = 0.2
 }) => {
+  const [localState, setLocalState] = useState({
+    on: false,
+    shuffle: false,
+    grid: false
+  })
+
   const changeGame = useCallback(() => {
-    onStatusChange(true)
-  }, [onStatusChange])
+    onStatusChange.on(true)
+  }, [onStatusChange.on])
+
+  const chooseShuffle = useCallback(() => {
+    setLocalState({ ...localState, shuffle: !localState.shuffle })
+    onStatusChange.shuffle(!localState.shuffle)
+  }, [onStatusChange.shuffle])
+
+  const chooseGrid = useCallback(() => {
+    setLocalState({ ...localState, grid: !localState.grid })
+    onStatusChange.grid(!localState.grid)
+  }, [onStatusChange.grid])
+
+  const handleGridStart = () => {
+    changeGame()
+    chooseGrid()
+  }
+
+  const handleShuffleStart = () => {
+    changeGame()
+    chooseShuffle()
+  }
+
   return (
     <motion.div
       initial={{ y: 30, opacity: 0 }}
@@ -36,9 +63,21 @@ const Titlescreen = ({
           my={4}
           color="#000"
           fontSize="14pt"
-          onClick={changeGame}
+          marginRight="1rem"
+          onClick={handleGridStart}
         >
-          {button}
+          {button[0]}
+        </Button>
+        <Button
+          bg="yellow.400"
+          _hover={{ bg: 'yellow.300' }}
+          my={4}
+          color="#000"
+          fontSize="14pt"
+          marginRight="1rem"
+          onClick={handleShuffleStart}
+        >
+          {button[1]}
         </Button>
       </Box>
     </motion.div>

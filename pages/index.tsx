@@ -5,24 +5,26 @@ import { useDB } from '../contexts/DatabaseContext'
 import Board from '../components/board'
 import Titlescreen from '../components/titlescreen'
 import timeout from '../components/util'
-// import Level from '../components/level'
 import RandomLayout from '../components/layout/random_layout'
 import GridLayout from '../components/layout/grid_layout'
+import Navbar from '../components/navbar'
+// import Level from '../components/level'
 
 function VisualMemory() {
   const [isOn, setIsOn] = useState(false)
   const [isOver, setIsOver] = useState(false)
-  const numberTiles = 16
+  const numberTiles = 25
   const numberList = Array.from(Array(numberTiles).keys()).map(i =>
     i.toString()
   )
 
-  const testType = {
-    no_mask: false,
-    energy_mask: false,
-    remove_board: false,
-    board_shuffle: true
-  }
+  const [enableFlash, setEnableFlash] = useState(false)
+  const [enableInvisible, setEnableInvisible] = useState(false)
+  const [enableMovement, setEnableMovement] = useState(false)
+  console.log(enableMovement)
+
+  const [grid, setGrid] = useState(false)
+  const [shuffle, setShuffle] = useState(false)
 
   const initPlay = {
     isDisplay: false,
@@ -137,11 +139,11 @@ function VisualMemory() {
         let newPos, overlap
         do {
           newPos = {
-            left: Math.random() * 90,
-            top: Math.random() * 90
+            left: Math.floor(Math.random() * 40),
+            top: Math.floor(Math.random() * 40)
           }
-          newPos.right = newPos.left + 14
-          newPos.bottom = newPos.top + 14
+          newPos.right = newPos.left + 5.5
+          newPos.bottom = newPos.top + 5.5
           overlap = checkOverlap(newPos, positions)
         } while (overlap)
         positions.push(newPos)
@@ -155,11 +157,14 @@ function VisualMemory() {
     setFlashTile(play.tilePattern)
 
     // Apply mask effect here
-    // if (play.mask[playerTrial] == 'energy-mask') {
-    //   await timeout(1000)
-    //   setFlashTile(numberList)
-    // } else if (play.mask[playerTrial] == 'remove-board') {
-    if (true) {
+    if (enableFlash) {
+      await timeout(1000)
+      setFlashTile(numberList)
+    } else if (enableInvisible) {
+      await timeout(1000)
+      setCurrFlashIntensity('0')
+      setFlashTile(numberList)
+    } else if (enableMovement) {
       await timeout(1000)
       setCurrFlashIntensity('0')
       setFlashTile(numberList)
@@ -232,11 +237,19 @@ function VisualMemory() {
   }
 
   if (isOn) {
-    if (testType.board_shuffle) {
+    if (shuffle) {
       return (
         <Board>
           <Box>
             {/* <Level>{play.score}</Level> */}
+            <Navbar
+              onStatusChange={{
+                restart: setIsOn,
+                enableFlash: setEnableFlash,
+                enableInvisible: setEnableInvisible,
+                enableMovement: setEnableMovement
+              }}
+            />
             <RandomLayout
               numberList={numberList}
               tileClickHandle={tileClickHandle}
@@ -249,11 +262,19 @@ function VisualMemory() {
           </Box>
         </Board>
       )
-    } else {
+    } else if (grid) {
       return (
         <Board>
           <Box>
             {/* <Level>{play.score}</Level> */}
+            <Navbar
+              onStatusChange={{
+                restart: setIsOn,
+                enableFlash: setEnableFlash,
+                enableInvisible: setEnableInvisible,
+                enableMovement: setEnableMovement
+              }}
+            />
             <GridLayout
               numberList={numberList}
               tileClickHandle={tileClickHandle}
@@ -288,8 +309,8 @@ function VisualMemory() {
         <Titlescreen
           title="Visual Memory"
           symbol="🧠"
-          button="Start"
-          onStatusChange={setIsOn}
+          button={['Grid', 'Shuffled']}
+          onStatusChange={{ grid: setGrid, shuffle: setShuffle, on: setIsOn }}
         >
           Explain procedure here.
         </Titlescreen>
