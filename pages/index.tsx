@@ -21,7 +21,6 @@ function VisualMemory() {
   const [enableFlash, setEnableFlash] = useState(false)
   const [enableInvisible, setEnableInvisible] = useState(false)
   const [enableMovement, setEnableMovement] = useState(false)
-  console.log(enableMovement)
 
   const [grid, setGrid] = useState(false)
   const [shuffle, setShuffle] = useState(false)
@@ -29,7 +28,7 @@ function VisualMemory() {
   const initPlay = {
     isDisplay: false,
     userTurn: false,
-    score: 5,
+    score: 7,
     correct: 0,
     tilePattern: [],
     userGuess: [],
@@ -58,6 +57,9 @@ function VisualMemory() {
   // Turn on game
   useEffect(() => {
     if (isOn) {
+      if (shuffle) {
+        shuffleTiles()
+      }
       setPlay({ ...initPlay, isDisplay: true })
     } else if (currentUser !== null) {
       getData()
@@ -132,47 +134,65 @@ function VisualMemory() {
     return false
   }
 
-  useEffect(() => {
-    if (buttonPositions.length === 0) {
-      let positions = []
-      numberList.forEach(() => {
-        let newPos, overlap
-        do {
-          newPos = {
-            left: Math.floor(Math.random() * 40),
-            top: Math.floor(Math.random() * 40)
-          }
-          newPos.right = newPos.left + 5.5
-          newPos.bottom = newPos.top + 5.5
-          overlap = checkOverlap(newPos, positions)
-        } while (overlap)
-        positions.push(newPos)
-      })
-      setButtonPositions(positions)
-    }
-  }, [numberList])
+  async function shuffleTiles() {
+    let positions = []
+    numberList.forEach(() => {
+      let newPos, overlap
+      do {
+        newPos = {
+          left: Math.floor(Math.random() * 40),
+          top: Math.floor(Math.random() * 40)
+        }
+        newPos.right = newPos.left + 5.5
+        newPos.bottom = newPos.top + 5.5
+        overlap = checkOverlap(newPos, positions)
+      } while (overlap)
+      positions.push(newPos)
+    })
+    setButtonPositions(positions)
+  }
 
   async function displayTiles() {
     await timeout(1000)
     setFlashTile(play.tilePattern)
+    let positions
 
     // Apply mask effect here
     if (enableFlash) {
       await timeout(1000)
       setFlashTile(numberList)
-    } else if (enableInvisible) {
+    }
+    if (enableInvisible) {
       await timeout(1000)
       setCurrFlashIntensity('0')
       setFlashTile(numberList)
-    } else if (enableMovement) {
-      await timeout(1000)
-      setCurrFlashIntensity('0')
-      setFlashTile(numberList)
+    }
+    if (enableMovement && shuffle) {
+      positions = []
+      buttonPositions.forEach((pos, _) => {
+        let newPos, overlap
+        do {
+          let sign = Math.random() < 0.5 ? -1 : 1
+          let val = Math.random() * 1.5 * sign
+          newPos = {
+            top: pos.top + val,
+            left: pos.left + val
+          }
+          newPos.right = newPos.left + 4.5
+          newPos.bottom = newPos.top + 4.5
+          overlap = checkOverlap(newPos, positions)
+        } while (overlap)
+        positions.push(newPos)
+      })
     }
 
     await timeout(1000)
     setFlashTile([])
     setCurrFlashIntensity('1')
+    if (enableMovement && shuffle) {
+      await timeout(500)
+      setButtonPositions(positions)
+    }
     setPlay({ ...play, isDisplay: false, userTurn: true })
   }
 
@@ -195,10 +215,15 @@ function VisualMemory() {
           setFlashTile([])
 
           // Update correct answer in database here
-
           setPlayerTrial(playerTrial + 1)
           setPlayerScore(playerScore + 1)
 
+          await timeout(1000)
+          if (shuffle) {
+            shuffleTiles()
+          }
+
+          await timeout(500)
           setPlay({
             ...play,
             isDisplay: true,
@@ -220,6 +245,12 @@ function VisualMemory() {
         // Update incorrect answer in database here
         setPlayerTrial(playerTrial + 1)
 
+        await timeout(1000)
+        if (shuffle) {
+          shuffleTiles()
+        }
+
+        await timeout(500)
         setPlay({
           ...play,
           isDisplay: true,
@@ -243,11 +274,11 @@ function VisualMemory() {
           <Box>
             {/* <Level>{play.score}</Level> */}
             <Navbar
-              onStatusChange={{
-                restart: setIsOn,
-                enableFlash: setEnableFlash,
-                enableInvisible: setEnableInvisible,
-                enableMovement: setEnableMovement
+              resetToggle={setIsOn}
+              onFeatureToggle={{
+                Flash: setEnableFlash,
+                Invisible: setEnableInvisible,
+                Movement: setEnableMovement
               }}
             />
             <RandomLayout
@@ -268,11 +299,11 @@ function VisualMemory() {
           <Box>
             {/* <Level>{play.score}</Level> */}
             <Navbar
-              onStatusChange={{
-                restart: setIsOn,
-                enableFlash: setEnableFlash,
-                enableInvisible: setEnableInvisible,
-                enableMovement: setEnableMovement
+              resetToggle={setIsOn}
+              onFeatureToggle={{
+                Flash: setEnableFlash,
+                Invisible: setEnableInvisible,
+                Movement: setEnableMovement
               }}
             />
             <GridLayout
