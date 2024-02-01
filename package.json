@@ -1,7 +1,7 @@
 {
-  "name": "humanbench",
+  "name": "Projection-game",
   "version": "1.0.0",
-  "description": "Clone of humanbenchmark.com",
+  "description": "Visual-spatial memory game to study the cogntive effects of projection",
   "main": "index.js",
   "scripts": {
     "dev": "next dev -H 0.0.0.0",

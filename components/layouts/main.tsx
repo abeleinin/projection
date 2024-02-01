@@ -6,7 +6,7 @@ const Main = ({ children }) => {
     <Box as="main">
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Human Benchmark</title>
+        <title>Projection Experiment</title>
       </Head>
 
       <Container maxWidth="100%" h="100vh" px={0}>

@@ -18,6 +18,7 @@ function VisualMemory() {
     i.toString()
   )
 
+  const [restartGame, setRestartGame] = useState(false)
   const [enableFlash, setEnableFlash] = useState(false)
   const [enableInvisible, setEnableInvisible] = useState(false)
   const [enableMovement, setEnableMovement] = useState(false)
@@ -53,6 +54,20 @@ function VisualMemory() {
 
   const { currentUser } = useAuth()
   const { getData, updateData } = useDB()
+
+  useEffect(() => {
+    if (restartGame) {
+      setIsOn(false)
+      setPlay(initPlay)
+      setShuffle(false)
+      setGrid(false)
+      setButtonPositions([])
+      setEnableFlash(false)
+      setEnableInvisible(false)
+      setEnableMovement(false)
+      setRestartGame(false)
+    }
+  }, [restartGame])
 
   // Turn on game
   useEffect(() => {
@@ -223,7 +238,7 @@ function VisualMemory() {
             shuffleTiles()
           }
 
-          await timeout(500)
+          // await timeout(500)
           setPlay({
             ...play,
             isDisplay: true,
@@ -250,7 +265,7 @@ function VisualMemory() {
           shuffleTiles()
         }
 
-        await timeout(500)
+        // await timeout(500)
         setPlay({
           ...play,
           isDisplay: true,
@@ -274,7 +289,9 @@ function VisualMemory() {
           <Box>
             {/* <Level>{play.score}</Level> */}
             <Navbar
-              resetToggle={setIsOn}
+              play={play}
+              setplay={setPlay}
+              resetToggle={setRestartGame}
               onFeatureToggle={{
                 Flash: setEnableFlash,
                 Invisible: setEnableInvisible,
@@ -299,11 +316,12 @@ function VisualMemory() {
           <Box>
             {/* <Level>{play.score}</Level> */}
             <Navbar
-              resetToggle={setIsOn}
+              play={play}
+              setplay={setPlay}
+              resetToggle={setRestartGame}
               onFeatureToggle={{
                 Flash: setEnableFlash,
-                Invisible: setEnableInvisible,
-                Movement: setEnableMovement
+                Invisible: setEnableInvisible
               }}
             />
             <GridLayout
@@ -338,12 +356,20 @@ function VisualMemory() {
     return (
       <Board>
         <Titlescreen
-          title="Visual Memory"
+          title="Visual-Spatial Memory"
           symbol="🧠"
-          button={['Grid', 'Shuffled']}
+          button={['Grid', 'Random']}
           onStatusChange={{ grid: setGrid, shuffle: setShuffle, on: setIsOn }}
         >
-          Explain procedure here.
+          Welcome to the <b>Projection Experiment Playground</b>! Try either the
+          <br />
+          Grid or Random layouts to determine the tile structure. Each layout
+          <br />
+          features different masks, which can be enabled independently or in
+          <br />
+          combination to alter the visual experience. Also, an incrementer
+          <br />
+          is provided to add or reduce the number of stimuli. Enjoy!
         </Titlescreen>
       </Board>
     )
