@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import { ArrowBackIcon } from '@chakra-ui/icons'
 import {
   Heading,
+  Box,
   Button,
   Flex,
   NumberInput,
@@ -77,20 +78,26 @@ const Navbar = ({ play, setplay, resetToggle, onFeatureToggle }) => {
           {featureName}
         </Button>
       ))}
-      <Heading size="md">Number of Stimuli: </Heading>
-      <NumberInput
-        size="md"
-        maxW={20}
-        value={numberOfTiles}
-        onChange={handleValueChange}
-        min={1}
-      >
-        <NumberInputField />
-        <NumberInputStepper>
-          <NumberIncrementStepper />
-          <NumberDecrementStepper />
-        </NumberInputStepper>
-      </NumberInput>
+      <Flex bg="yellow.400" alignItems={'center'} p={1} borderRadius="md">
+        <Heading size="sm" pr={2}>
+          Stimuli:
+        </Heading>
+        <NumberInput
+          size="md"
+          maxW={20}
+          value={numberOfTiles}
+          onChange={handleValueChange}
+          min={1}
+          bg="whiteAlpha.400"
+          borderRadius="md"
+        >
+          <NumberInputField />
+          <NumberInputStepper>
+            <NumberIncrementStepper />
+            <NumberDecrementStepper />
+          </NumberInputStepper>
+        </NumberInput>
+      </Flex>
     </Flex>
   )
 }
