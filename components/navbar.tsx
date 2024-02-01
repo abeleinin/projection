@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react'
 import { ArrowBackIcon } from '@chakra-ui/icons'
 import {
   Heading,
-  Box,
   Button,
   Flex,
   NumberInput,
