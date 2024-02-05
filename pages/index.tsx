@@ -155,11 +155,11 @@ function VisualMemory() {
       let newPos, overlap
       do {
         newPos = {
-          left: Math.floor(Math.random() * 40),
-          top: Math.floor(Math.random() * 40)
+          left: Math.floor(Math.random() * 25) + 25,
+          top: Math.floor(Math.random() * 60) + 20
         }
-        newPos.right = newPos.left + 5.5
-        newPos.bottom = newPos.top + 5.5
+        newPos.right = newPos.left + 5
+        newPos.bottom = newPos.top + 5
         overlap = checkOverlap(newPos, positions)
       } while (overlap)
       positions.push(newPos)
@@ -362,14 +362,10 @@ function VisualMemory() {
           onStatusChange={{ grid: setGrid, shuffle: setShuffle, on: setIsOn }}
         >
           Welcome to the <b>Projection Experiment Playground</b>! Try either the
-          <br />
           Grid or Random layouts to determine the tile structure. Each layout
-          <br />
           features different masks, which can be enabled independently or in
-          <br />
-          combination to alter the visual experience. Also, an incrementer
-          <br />
-          is provided to add or reduce the number of stimuli. Enjoy!
+          combination to alter the visual experience. Also, an incrementer is
+          provided to add or reduce the number of stimuli. Enjoy!
         </Titlescreen>
       </Board>
     )

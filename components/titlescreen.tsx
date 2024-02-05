@@ -48,21 +48,22 @@ const Titlescreen = ({
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: delay }}
     >
-      <Box fontSize="24px" color="#fff">
-        <Heading size="4xl" my={4}>
+      <Box fontSize={'24px'} color="#fff">
+        <Heading size={'4xl'} my={4}>
           {symbol}
         </Heading>
-        <Heading size="4xl" my={4}>
+        <Heading size={['xl', '4xl']} my={4}>
           {title}
         </Heading>
-        <Text fontSize="xl">{children}</Text>
-        <br />
+        <Text px={{ base: '1em', lg: '16em' }} fontSize={['md', 'xl']}>
+          {children}
+        </Text>
         <Button
           bg="yellow.400"
           _hover={{ bg: 'yellow.300' }}
           my={4}
           color="#000"
-          fontSize="14pt"
+          fontSize={'14pt'}
           marginRight="1rem"
           onClick={handleGridStart}
         >
@@ -73,7 +74,7 @@ const Titlescreen = ({
           _hover={{ bg: 'yellow.300' }}
           my={4}
           color="#000"
-          fontSize="14pt"
+          fontSize={'14pt'}
           marginRight="1rem"
           onClick={handleShuffleStart}
         >

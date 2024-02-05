@@ -9,12 +9,11 @@ const GridLayout = ({
   flashIntensity
 }) => {
   return (
-    <SimpleGrid spacing="1" columns={{ md: 5 }}>
+    <SimpleGrid spacing="1" columns={5} w="full">
       {numberList &&
         numberList.map((v, _) => (
           <Button
             key={v}
-            // bg={wrongTile.includes(v) ? 'black' : 'white'}
             bg={
               rewardTile.includes(v)
                 ? '#38DC35'
@@ -22,12 +21,13 @@ const GridLayout = ({
                 ? 'red'
                 : 'white'
             }
-            p="2.5em"
+            p={{ base: '1em', md: '1.5em', lg: '2em' }}
+            fontSize={'1.5rem'}
             rounded="md"
             opacity={flashTile.includes(v) ? flashIntensity : '0.2'}
             _hover={{}}
             onClick={() => tileClickHandle(v)}
-          ></Button>
+          />
         ))}
     </SimpleGrid>
   )

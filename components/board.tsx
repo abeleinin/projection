@@ -4,8 +4,8 @@ const Board = ({ children }) => {
     <Center w="100%" h="100%" bg="#37404A">
       <Box
         display="flex"
-        p={2}
-        mb={6}
+        p={{ sm: 4, md: 8 }}
+        mb={{ sm: 0, md: 4 }}
         textAlign="center"
         justifyContent="center"
       >
