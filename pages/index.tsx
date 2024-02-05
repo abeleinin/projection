@@ -46,6 +46,9 @@ function VisualMemory() {
 
   const [currFlashIntensity, setCurrFlashIntensity] = useState('1')
 
+  const [buttonPositions, setButtonPositions] = useState([])
+  const [shuffleArangement, setShuffleArangement] = useState([])
+
   const [userData, setUserData] = useState({
     correct: [],
     mask: [],
@@ -133,8 +136,6 @@ function VisualMemory() {
     }
   }, [isOn, play.isDisplay, play.tilePattern.length])
 
-  const [buttonPositions, setButtonPositions] = useState([])
-
   const checkOverlap = (newPos, existingPositions) => {
     for (let pos of existingPositions) {
       if (
@@ -165,6 +166,7 @@ function VisualMemory() {
       positions.push(newPos)
     })
     setButtonPositions(positions)
+    setShuffleArangement(positions)
   }
 
   async function displayTiles() {
@@ -235,7 +237,7 @@ function VisualMemory() {
 
           await timeout(1000)
           if (shuffle) {
-            shuffleTiles()
+            setButtonPositions(shuffleArangement)
           }
 
           // await timeout(500)
@@ -262,7 +264,7 @@ function VisualMemory() {
 
         await timeout(1000)
         if (shuffle) {
-          shuffleTiles()
+          setButtonPositions(shuffleArangement)
         }
 
         // await timeout(500)
