@@ -8,12 +8,12 @@ import timeout from '../components/util'
 import RandomLayout from '../components/layout/random_layout'
 import GridLayout from '../components/layout/grid_layout'
 import Navbar from '../components/navbar'
-// import Level from '../components/level'
 
 function VisualMemory() {
   const [isOn, setIsOn] = useState(false)
   const [isOver, setIsOver] = useState(false)
-  const numberTiles = 25
+  const PAD = 5
+  const numberTiles = 36
   const numberList = Array.from(Array(numberTiles).keys()).map(i =>
     i.toString()
   )
@@ -21,7 +21,7 @@ function VisualMemory() {
   const [restartGame, setRestartGame] = useState(false)
   const [enableFlash, setEnableFlash] = useState(false)
   const [enableInvisible, setEnableInvisible] = useState(false)
-  const [enableMovement, setEnableMovement] = useState(false)
+  const [enableShuffle, setEnableShuffle] = useState(false)
 
   const [grid, setGrid] = useState(false)
   const [shuffle, setShuffle] = useState(false)
@@ -67,7 +67,7 @@ function VisualMemory() {
       setButtonPositions([])
       setEnableFlash(false)
       setEnableInvisible(false)
-      setEnableMovement(false)
+      setEnableShuffle(false)
       setRestartGame(false)
     }
   }, [restartGame])
@@ -159,8 +159,8 @@ function VisualMemory() {
           left: Math.floor(Math.random() * 40),
           top: Math.floor(Math.random() * 40)
         }
-        newPos.right = newPos.left + 5.5
-        newPos.bottom = newPos.top + 5.5
+        newPos.right = newPos.left + PAD
+        newPos.bottom = newPos.top + PAD
         overlap = checkOverlap(newPos, positions)
       } while (overlap)
       positions.push(newPos)
@@ -173,40 +173,30 @@ function VisualMemory() {
     await timeout(1000)
     setFlashTile(play.tilePattern)
     let positions
+    let maskEffectDuration = 2000
 
     // Apply mask effect here
     if (enableFlash) {
-      await timeout(1000)
+      await timeout(maskEffectDuration)
       setFlashTile(numberList)
     }
     if (enableInvisible) {
-      await timeout(1000)
+      await timeout(maskEffectDuration)
       setCurrFlashIntensity('0')
       setFlashTile(numberList)
     }
-    if (enableMovement && shuffle) {
-      positions = []
-      buttonPositions.forEach((pos, _) => {
-        let newPos, overlap
-        do {
-          let sign = Math.random() < 0.5 ? -1 : 1
-          let val = Math.random() * 1.5 * sign
-          newPos = {
-            top: pos.top + val,
-            left: pos.left + val
-          }
-          newPos.right = newPos.left + 4.5
-          newPos.bottom = newPos.top + 4.5
-          overlap = checkOverlap(newPos, positions)
-        } while (overlap)
-        positions.push(newPos)
-      })
+    if (enableShuffle && shuffle) {
+      positions = shuffleArangement
+      await timeout(maskEffectDuration)
+      setFlashTile([])
+      await timeout(500)
+      shuffleTiles()
     }
 
     await timeout(1000)
     setFlashTile([])
     setCurrFlashIntensity('1')
-    if (enableMovement && shuffle) {
+    if (enableShuffle && shuffle) {
       await timeout(500)
       setButtonPositions(positions)
     }
@@ -251,6 +241,7 @@ function VisualMemory() {
           })
         }
       } else {
+        setPlay({ ...play, userTurn: false })
         setFlashTile([userGuess])
         setWrongTile([userGuess])
         await timeout(500)
@@ -289,7 +280,6 @@ function VisualMemory() {
       return (
         <Board>
           <Box>
-            {/* <Level>{play.score}</Level> */}
             <Navbar
               play={play}
               setplay={setPlay}
@@ -297,7 +287,7 @@ function VisualMemory() {
               onFeatureToggle={{
                 Flash: setEnableFlash,
                 Invisible: setEnableInvisible,
-                Movement: setEnableMovement
+                Shuffle: setEnableShuffle
               }}
             />
             <RandomLayout
@@ -316,7 +306,6 @@ function VisualMemory() {
       return (
         <Board>
           <Box>
-            {/* <Level>{play.score}</Level> */}
             <Navbar
               play={play}
               setplay={setPlay}

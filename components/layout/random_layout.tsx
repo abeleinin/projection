@@ -22,9 +22,7 @@ const RandomLayout: React.FC<RandomLayoutProps> = memo(function RandomLayout({
   flashIntensity
 }) {
   return (
-    // <Box position="relative" width="50vw" height="80vh" left="10em" (Translation mask using left and top attr)>
-    // <Box position="relative" width="50vw" height="80vh">
-    <Box position="relative" width="50vw" height="80vh">
+    <Box position="relative" width="40vw" height="80vh">
       {numberList.map((v, index) => (
         <Button
           key={v}
